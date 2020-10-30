@@ -1,4 +1,5 @@
 window.addEventListener('DOMContentLoaded', () => {
+
    let player = "x";
    let winner = undefined
    let totalMoves = 0 //commited to storage
@@ -56,6 +57,7 @@ window.addEventListener('DOMContentLoaded', () => {
          setTimeout(()=>{alert(winner)},0)
          return true
       }
+      return false
    }
    const gameStatus = (event) => {
       winningMoves.forEach((moves) => {
@@ -137,11 +139,13 @@ window.addEventListener('DOMContentLoaded', () => {
          gameStatus()
          let status = declareWinner()
          setToStorage()
+         disableNewButton(totalMoves)
+         disableGiveUp()
          if (status === true) {
-            disableNewButton(totalMoves)
-            disableGiveUp()
             clearCache()
             location.reload()
+         } else if (status === false && totalMoves === 9) {
+            setTimeout(()=>{alert("The game is a tie")},0)
          }
 
 
