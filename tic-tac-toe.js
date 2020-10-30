@@ -5,8 +5,8 @@ window.addEventListener('DOMContentLoaded', () => {
    const board = document.getElementById("tic-tac-toe-board")
    const buttons = document.querySelectorAll('button')
    const winningMoves = [ [0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6] ]
-   let player1Moves = [] //
-   let player2Moves = [] //
+   let player1Moves = []
+   let player2Moves = []
    const playerStorage = localStorage.getItem('player')
    const player1Storage = localStorage.getItem('player1')
    const player2Storage = localStorage.getItem('player2')
@@ -24,11 +24,8 @@ window.addEventListener('DOMContentLoaded', () => {
    const fetchFromStorage = () => {
       if (Number(totalMovesStorage) > 0) {
          player = playerStorage
-         let player1MovesArr = player1Storage.split(',')
-         player1Moves = player1MovesArr
-         let player2MovesArr = player2Storage.split(',')
-         player2Moves = player2MovesArr
-         totalMoves = Number(totalMoves) + totalMoves
+         player1Moves = Array.from(player1Storage)
+         player2Moves = Array.from(player2Storage)
 
       }
    }
@@ -41,9 +38,9 @@ window.addEventListener('DOMContentLoaded', () => {
    }
 
    const disableNewButton = (totalMoves) => {
-      if (totalMoves < 9) {
+      if (totalMoves !== 9) {
          buttons[0].disabled = true
-      } else if (totalMoves === 9){
+      } else {
          buttons[0].disabled = false
       }
    }
@@ -56,9 +53,9 @@ window.addEventListener('DOMContentLoaded', () => {
    }
    const declareWinner = () => {
       if (winner !== undefined) {
-         alert(winner)
+         setTimeout(()=>{alert(winner)},0)
+         return true
       }
-      disableNewButton(totalMoves)
    }
    const gameStatus = (event) => {
       winningMoves.forEach((moves) => {
@@ -87,7 +84,6 @@ window.addEventListener('DOMContentLoaded', () => {
          }
 
       })
-      declareWinner()
    }
    const changePlayer = () => {
       if (player === 'x') {
@@ -100,35 +96,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
       }
    }
-   const renderGame = () => {
-      if (player1Storage !== null) {
-         let playerXMoves = player1Storage.split(',')
-         playerXMoves.forEach((id) => {
-            let target = document.getElementById(id)
-            let img = document.createElement('img')
-            img.src = `https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-x.svg`;
-            img.setAttribute('id', 'filled')
-            target.appendChild(img)
-         })
-      }
-
-      if (player2Storage !== null) {
-         let playerOMoves = player2Storage.split(',')
-         playerOMoves.forEach((id) => {
-            let target = document.getElementById(id)
-            let img = document.createElement('img')
-            img.src = `https://assets.aaonline.io/Module-DOM-API/formative-project-tic-tac-toe/player-o.svg`;
-            img.setAttribute('id', 'filled')
-            target.appendChild(img)
-         })
-      }
-
-   }
 
    //! Functions called on initial load
    fetchFromStorage()
    disableNewButton(totalMoves)
-   renderGame()
 
 
    //! Event Listeners
@@ -164,8 +135,14 @@ window.addEventListener('DOMContentLoaded', () => {
          }
          changePlayer()
          gameStatus()
+         let status = declareWinner()
          setToStorage()
-         disableGiveUp()
+         if (status === true) {
+            disableNewButton(totalMoves)
+            disableGiveUp()
+            clearCache()
+            location.reload()
+         }
 
 
       }
